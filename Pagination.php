@@ -18,16 +18,16 @@ class Pagination
     protected $totalPage; // 总页数
     protected $url; //文件访问地址(除分页之外的其他部分)
     protected $foo; //处理url时需要用到的一个无意义参数名称
-    protected $pageValName; //url上用于指定分页的变量名
+    protected $pageVarName; //url上用于指定分页的变量名
 
-    public function __construct($total, $pageCount, $showCount, $url = '', $foo = 'c', $pageValName = 'np')
+    public function __construct($total, $pageCount, $showCount, $url = '', $foo = 'c', $pageVarName = 'np')
     {
         $this->total = $total;
         $this->pageCount = $pageCount;
         $this->showCount = $showCount;
         $this->totalPage = ceil($this->total / $this->pageCount);
         $this->foo = $foo;
-        $this->pageValName = $pageValName;
+        $this->pageVarName = $pageVarName;
         $this->initializeUrl($url);
     }
 
@@ -39,14 +39,14 @@ class Pagination
                 $this->url = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?' . $this->foo . '=1';
                 return;
             }
-            if (strpos($query_string, $this->pageValName.'=') === false) {
+            if (strpos($query_string, $this->pageVarName.'=') === false) {
                 $this->url = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?' . $query_string;
                 return;
             } else {
                 $arr = explode("&", $query_string);
                 foreach ($arr as $k => $v) {
                     $d_arr = explode('=', $v);
-                    if ($d_arr[0] == $this->pageValName) {
+                    if ($d_arr[0] == $this->pageVarName) {
                         unset($arr[$k]);
                     }
                 }
@@ -56,7 +56,7 @@ class Pagination
             }
         }
 
-        if (strpos($url, $this->pageValName.'=') === false) {
+        if (strpos($url, $this->pageVarName.'=') === false) {
             $this->url = (strpos($url, '?') === false ? $url . '?' . $this->foo . '=1' : $url);
         } else {
             exit('指定的querystring字符串中包含和自定义的分页变量重名,请重新调整分页变量名');
@@ -84,7 +84,7 @@ class Pagination
         for ($i = $this->showCount * $n + 1; $i <= ($this->showCount * $n + $this->showCount); $i++) {
             if ($i <= $this->totalPage) {
                 if ($page != $i) {
-                    $str_a .= '<a href="' . $this->url . '&' . $this->pageValName . '=' . $i . '">' . $i . '</a>&nbsp;';
+                    $str_a .= '<a href="' . $this->url . '&' . $this->pageVarName . '=' . $i . '">' . $i . '</a>&nbsp;';
                 } else {
                     $str_a .= '<a class="bold">' . $i . '</a>&nbsp;';
                 }
@@ -93,16 +93,16 @@ class Pagination
             }
         }
         if ($page > 1) {
-            $str_first = '<a href="' . $this->url . '&' . $this->pageValName . '=1">' . '首页</a>&nbsp;';
-            $str_pre = '<a href="' . $this->url . '&' . $this->pageValName . '=' . ($page - 1) . '">上页</a>&nbsp;';
+            $str_first = '<a href="' . $this->url . '&' . $this->pageVarName . '=1">' . '首页</a>&nbsp;';
+            $str_pre = '<a href="' . $this->url . '&' . $this->pageVarName . '=' . ($page - 1) . '">上页</a>&nbsp;';
         } else {
             $str_first = "首页&nbsp;";
             $str_pre = '<a href="javascript:;">上页</a>&nbsp;';
         }
 
         if ($page < $this->totalPage) {
-            $str_last = '<a href="' . $this->url . '&' . $this->pageValName . '=' . $this->totalPage . '">尾页</a>&nbsp;';
-            $str_next = '<a href="' . $this->url . '&' . $this->pageValName . '=' . ($page + 1) . '">下页</a>&nbsp;';
+            $str_last = '<a href="' . $this->url . '&' . $this->pageVarName . '=' . $this->totalPage . '">尾页</a>&nbsp;';
+            $str_next = '<a href="' . $this->url . '&' . $this->pageVarName . '=' . ($page + 1) . '">下页</a>&nbsp;';
         } else {
             $str_last = "尾页&nbsp;";
             $str_next = '<a href="javascript:;">下页</a>&nbsp;';
